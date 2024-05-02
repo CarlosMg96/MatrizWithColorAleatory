@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+
+    <title>Matriz Aleatoria</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 10%;
+      }
+      td {
+        border: 1px solid black;
+        padding: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 style="font-family: Arial, Helvetica, sans-serif">Matriz Aleatoria</h1>
+
+    <div class="container-fluid text-center m-3">
+      <div id="div_content"></div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      setInterval(() => {
+        getMatriz();
+      }, 3000);
+
+      async function getMatriz() {
+        let URL = "http://localhost:3000/matriz-aleatoria";
+        try {
+          const response = await fetch(URL);
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const data = await response.json();
+          const matriz = data.matriz;
+          const coordenadasColoreadas = data.coordenadasColoreadas;
+
+          let tablaHTML = "<table>";
+          for (let i = 0; i < matriz.length; i++) {
+            tablaHTML += "<tr>";
+            for (let j = 0; j < matriz[0].length; j++) {
+              let valorCelda = matriz[i][j];
+              if (valorCelda === null || valorCelda === undefined) {
+                valorCelda = ""; 
+              }
+
+              let color = "white"; 
+              let coordenada = coordenadasColoreadas.find(
+                (coord) => coord.fila === i && coord.columna === j
+              );
+              if (coordenada) {
+                color = coordenada.color;
+              }
+              tablaHTML += `<td style="background-color: ${color};">${valorCelda}</td>`;
+            }
+            tablaHTML += "</tr>";
+          }
+          tablaHTML += "</table>";
+
+          document.getElementById("div_content").innerHTML = tablaHTML;
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+    </script>
+  </body>
+</html>
